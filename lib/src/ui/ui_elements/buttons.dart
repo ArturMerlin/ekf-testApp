@@ -10,7 +10,6 @@ class UsualButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-
       height: 50,
       decoration: BoxDecoration(
         color: Colors.blue.withOpacity(0.5),
@@ -20,9 +19,11 @@ class UsualButton extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: onTap,
-        child: Text(
-          text,
-          style: TextStyle(color: Colors.white),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
