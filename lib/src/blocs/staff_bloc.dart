@@ -8,13 +8,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StaffBloc {
   /// Блок с логикой для сотрудников
 
-  Subject<List<Staff>> _staffSubj = BehaviorSubject();
+  Subject<List<Staff>> _staffListSubj = BehaviorSubject();
+  Subject<Staff> _staffSubj = BehaviorSubject();
+  Staff staff = Staff();
 
   StaffBloc() {
     getStaffList();
   }
 
-  Stream<List<Staff>> get staffStream => _staffSubj.stream;
+  Stream<List<Staff>> get staffListStream => _staffListSubj.stream;
+
+  Stream<Staff> get staffStream => _staffSubj.stream;
+
+  Sink<Staff> get staffSink => _staffSubj.sink;
 
   Future<void> getStaffList() async {
     /// Получение списка сотрудников из внутреннего хранилища устрайства
@@ -24,29 +30,31 @@ class StaffBloc {
       List<String>? staffListEncoded = _preferences.getStringList("staff_list");
       // конвертируем json строку в json объект, а потом из него получаем объект сотрудника. Формируем список
       List<Staff> staffList = staffListEncoded!.map((e) => Staff.fromJson(json.decode(e))).toList();
-      _staffSubj.add(staffList);
+      _staffListSubj.add(staffList);
     } else
-      _staffSubj.add([]);
+      _staffListSubj.add([]);
   }
 
-  addStaff({
-    required String firstName,
-    required String secondName,
-    required String middleName,
-    required DateTime birthday,
-    required String post,
-  }) async {
-    Staff staff =
-        Staff(firstName: firstName, lastName: secondName, middleName: middleName, birthday: birthday, post: post);
+  bool validateStaff() {
+    if (staff.firstName != null &&
+        staff.lastName != null &&
+        staff.middleName != null &&
+        staff.birthday != null &&
+        staff.post != null) return true;
+    return false;
+  }
+
+  addStaff() async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
-    List<Staff> staffList = await _staffSubj.first;
+    List<Staff> staffList = await _staffListSubj.first;
     staffList.add(staff);
-    _staffSubj.add(staffList);
+    _staffListSubj.add(staffList);
     List<String> staffListEncoded = staffList.map((e) => json.encode(e.toJson())).toList();
     _preferences.setStringList("staff_list", staffListEncoded);
   }
 
   dispose() {
+    _staffListSubj.close();
     _staffSubj.close();
   }
 }
