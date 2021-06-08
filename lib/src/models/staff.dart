@@ -7,17 +7,11 @@ part 'staff.g.dart';
 class Staff extends Person {
   /// Модель сотрудника
   List<Person>? children;
-  String post;
+  String? post;
 
-  Staff(
-      {required String firstName,
-      required String lastName,
-      required String middleName,
-      required DateTime birthday,
-      children,
-      required this.post})
+  Staff({String? firstName, String? lastName, String? middleName, DateTime? birthday, children, this.post})
       : super(firstName, lastName, middleName, birthday) {
-    this.children = children ?? [];
+    this.children = children;
   }
 
   factory Staff.fromJson(Map<String, dynamic> json) => _$StaffFromJson(json);
