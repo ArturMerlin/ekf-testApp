@@ -8,12 +8,12 @@ part of 'staff.dart';
 
 Staff _$StaffFromJson(Map<String, dynamic> json) {
   return Staff(
-    json['firstName'] as String,
-    json['lastName'] as String,
-    json['middleName'] as String,
-    DateTime.parse(json['birthday'] as String),
-    json['children'],
-    json['post'] as String,
+    firstName: json['firstName'] as String,
+    lastName: json['lastName'] as String,
+    middleName: json['middleName'] as String,
+    birthday: DateTime.parse(json['birthday'] as String),
+    children: json['children'],
+    post: json['post'] as String,
   );
 }
 
