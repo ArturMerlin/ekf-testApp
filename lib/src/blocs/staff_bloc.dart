@@ -29,6 +29,23 @@ class StaffBloc {
       _staffSubj.add([]);
   }
 
+  addStaff({
+    required String firstName,
+    required String secondName,
+    required String middleName,
+    required DateTime birthday,
+    required String post,
+  }) async {
+    Staff staff =
+        Staff(firstName: firstName, lastName: secondName, middleName: middleName, birthday: birthday, post: post);
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    List<Staff> staffList = await _staffSubj.first;
+    staffList.add(staff);
+    _staffSubj.add(staffList);
+    List<String> staffListEncoded = staffList.map((e) => json.encode(e.toJson())).toList();
+    _preferences.setStringList("staff_list", staffListEncoded);
+  }
+
   dispose() {
     _staffSubj.close();
   }
