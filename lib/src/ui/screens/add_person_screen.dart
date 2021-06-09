@@ -1,22 +1,33 @@
 import 'package:efk_test_app/src/blocs/staff_bloc.dart';
+import 'package:efk_test_app/src/models/person.dart';
 import 'package:efk_test_app/src/models/staff.dart';
 import 'package:efk_test_app/src/ui/ui_elements/buttons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AddStaffScreen extends StatefulWidget {
+class AddPersonScreen extends StatefulWidget {
+  final Staff? parent;
+
+  const AddPersonScreen({Key? key, this.parent}) : super(key: key);
+
   @override
-  _AddStaffScreenState createState() => _AddStaffScreenState();
+  _AddPersonScreenState createState() => _AddPersonScreenState();
 }
 
-class _AddStaffScreenState extends State<AddStaffScreen> {
+class _AddPersonScreenState extends State<AddPersonScreen> {
   late StaffBloc staffBloc;
+  late Person person;
+
+  @override
+  void initState() {
+    super.initState();
+    person = widget.parent == null ? Staff() : Person();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     staffBloc = StaffProvider.of(context);
-    staffBloc.staff = Staff();
   }
 
   @override
@@ -25,7 +36,7 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
       behavior: HitTestBehavior.translucent,
       child: Scaffold(
         appBar: AppBar(),
-        body: StreamBuilder<Staff>(
+        body: StreamBuilder<Person>(
             stream: staffBloc.staffStream,
             builder: (context, snapshot) {
               return Padding(
@@ -34,9 +45,9 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
                   children: [
                     _textField(
                       label: "Фамилия",
-                      controllerText: staffBloc.staff.lastName,
+                      controllerText: person.lastName,
                       onChanged: (value) {
-                        staffBloc.staff.lastName = value;
+                        person.lastName = value;
                       },
                     ),
                     Container(
@@ -44,9 +55,9 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
                     ),
                     _textField(
                       label: "Имя",
-                      controllerText: staffBloc.staff.firstName,
+                      controllerText: person.firstName,
                       onChanged: (value) {
-                        staffBloc.staff.firstName = value;
+                        person.firstName = value;
                       },
                     ),
                     Container(
@@ -54,9 +65,9 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
                     ),
                     _textField(
                       label: "Отчество",
-                      controllerText: staffBloc.staff.middleName,
+                      controllerText: person.middleName,
                       onChanged: (value) {
-                        staffBloc.staff.middleName = value;
+                        person.middleName = value;
                       },
                     ),
                     Container(
@@ -66,36 +77,56 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
                     Container(
                       height: 8,
                     ),
-                    _textField(
-                      label: "Пост",
-                      controllerText: staffBloc.staff.post,
-                      onChanged: (value) {
-                        staffBloc.staff.post = value;
-                      },
-                    ),
+                    if (person is Staff)
+                      _textField(
+                        label: "Пост",
+                        controllerText: (person as Staff).post,
+                        onChanged: (value) {
+                          (person as Staff).post = value;
+                        },
+                      ),
                     Container(
                       height: 8,
                     ),
                     UsualButton(
-                        onTap: () async{
-                          if (staffBloc.validateStaff()) {
-                            await staffBloc.addStaff();
-                            Navigator.of(context).pop();
-                          } else
-                            showDialog(
-                                context: context,
-                                builder: (_) =>
-                                new AlertDialog(
-                                  title: new Text("Заполнены не все поля"),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      child: Text('Закрыть'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                ));
+                        onTap: () async {
+                          if (person is Staff) {
+                            if (staffBloc.validateStaff(staff: (person as Staff))) {
+                              await staffBloc.addStaff(staff: (person as Staff));
+                              Navigator.of(context).pop();
+                            } else
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => new AlertDialog(
+                                        title: new Text("Заполнены не все поля"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('Закрыть'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      ));
+                          } else {
+                            if (staffBloc.validateChild(child: person)) {
+                              await staffBloc.addChild(staff: widget.parent!, child: person);
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            } else
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => new AlertDialog(
+                                        title: new Text("Заполнены не все поля"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('Закрыть'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      ));
+                          }
                         },
                         text: "Сохранить")
                   ],
@@ -131,20 +162,20 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
               firstDate: DateTime(1900));
 
           if (date != null) {
-            staffBloc.staff.birthday = date;
-            staffBloc.staffSink.add(staffBloc.staff);
+            person.birthday = date;
+            staffBloc.staffSink.add(person);
           }
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (staffBloc.staff.birthday == null)
+            if (person.birthday == null)
               Text("День рождения",
                   style: TextStyle(
                     color: Colors.grey.withOpacity(0.7),
                   ).copyWith(fontSize: 16)),
-            if (staffBloc.staff.birthday != null) ...[
+            if (person.birthday != null) ...[
               Text("День рождения",
                   style: TextStyle(
                     color: Colors.grey.withOpacity(0.7),
@@ -152,8 +183,7 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
-                    "${staffBloc.staff.birthday!.day}.${staffBloc.staff.birthday!.month}.${staffBloc.staff.birthday!
-                        .year}",
+                    "${person.birthday!.day}.${person.birthday!.month}.${person.birthday!.year}",
                     style: TextStyle()),
               ),
             ]
