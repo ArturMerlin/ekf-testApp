@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddPersonScreen extends StatefulWidget {
+  /// Единый виджет по добавлению сотрудников и их детей
+  /// Если передан parent , значит, что мы добавляем к нему ребёнка
   final Staff? parent;
 
   const AddPersonScreen({Key? key, this.parent}) : super(key: key);
@@ -16,7 +18,7 @@ class AddPersonScreen extends StatefulWidget {
 
 class _AddPersonScreenState extends State<AddPersonScreen> {
   late StaffBloc staffBloc;
-  late Person person;
+  late Person person; // Персона (сотрудник или ребёнок) , которую будет добавлять
 
   @override
   void initState() {

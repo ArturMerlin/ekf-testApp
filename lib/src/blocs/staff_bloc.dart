@@ -36,6 +36,7 @@ class StaffBloc {
   }
 
   bool validateStaff({required Staff staff}) {
+    /// Проверка, что все поля заполнены у сотрудника
     if (staff.firstName != null &&
         staff.lastName != null &&
         staff.middleName != null &&
@@ -45,30 +46,35 @@ class StaffBloc {
   }
 
   addStaff({required Staff staff}) async {
+    /// Добавление сотрудника в SharedPreferences
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     List<Staff> staffList = await _staffListSubj.first;
     staffList.add(staff);
-    _staffListSubj.add(staffList);
-    List<String> staffListEncoded = staffList.map((e) => json.encode(e.toJson())).toList();
-    _preferences.setStringList("staff_list", staffListEncoded);
+    _staffListSubj.add(staffList); // добавляем сразу в стрим. чтобы информация динамически обновилась
+
+    List<String> staffListEncoded = staffList.map((e) => json.encode(e.toJson())).toList(); // кодируем в json строку
+    _preferences.setStringList("staff_list", staffListEncoded); // запись в SharedPreferences
   }
 
   bool validateChild({required Person child}) {
+    /// Проверка, что все поля заполнены у ребёнка
     if (child.firstName != null && child.lastName != null && child.middleName != null && child.birthday != null)
       return true;
     return false;
   }
 
   addChild({required Staff staff, required Person child}) async {
+    /// Добавление ребёнка к сотруднику и далее в SharedPreferences
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     List<Staff> staffList = await _staffListSubj.first;
-    Staff _staff = staffList.singleWhere((element) => element == staff);
+
+    Staff _staff = staffList.singleWhere((element) => element == staff); // ищем сотрудника в нашем списке
     if (_staff.children == null) _staff.children = [];
     _staff.children!.add(child);
-    staffList[staffList.indexOf(_staff)] = _staff;
-    _staffListSubj.add(staffList);
-    List<String> staffListEncoded = staffList.map((e) => json.encode(e.toJson())).toList();
-    _preferences.setStringList("staff_list", staffListEncoded);
+    staffList[staffList.indexOf(_staff)] = _staff; // обновляем список
+    _staffListSubj.add(staffList); // добавляем сразу в стрим. чтобы информация динамически обновилась
+    List<String> staffListEncoded = staffList.map((e) => json.encode(e.toJson())).toList();  // кодируем в json строку
+    _preferences.setStringList("staff_list", staffListEncoded); // запись в SharedPreferences
   }
 
   dispose() {

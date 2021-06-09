@@ -7,8 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class StaffListScreen extends StatelessWidget {
-
-
+  /// Экран списка сотрудников
   @override
   Widget build(BuildContext context) {
     final StaffBloc staffBloc = StaffProvider.of(context);
@@ -29,8 +28,7 @@ class StaffListScreen extends StatelessWidget {
                     children: [
                       UsualButton(
                         onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (c) => AddPersonScreen()));
+                          Navigator.of(context).push(CupertinoPageRoute(builder: (c) => AddPersonScreen()));
                         },
                         text: "Добавить сотрудника",
                       ),

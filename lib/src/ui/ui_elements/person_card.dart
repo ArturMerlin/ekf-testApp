@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PersonCard extends StatelessWidget {
+  /// Краткая информация о сотруднике или ребёнке
   final Person person;
 
   const PersonCard({Key? key, required this.person}) : super(key: key);

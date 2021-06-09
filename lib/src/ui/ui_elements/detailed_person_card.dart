@@ -7,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DetailedPersonCard extends StatelessWidget {
+  /// Детальная информация о сотруднике или его ребёнке
+  /// Виджет отображается как модель  Staff, так и Person
   final Person person;
 
   const DetailedPersonCard({Key? key, required this.person}) : super(key: key);

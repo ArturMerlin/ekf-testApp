@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UsualButton extends StatelessWidget {
+  /// Виджет кнопки
   final VoidCallback onTap;
   final String text;
 
