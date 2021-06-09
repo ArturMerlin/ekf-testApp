@@ -14,10 +14,7 @@ class PersonCard extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        if ((person is Staff))
-          Navigator.of(context).push(CupertinoPageRoute(builder: (c) => DetailedPersonScreen(person: person,)));
-        else
-          return;
+        Navigator.of(context).push(CupertinoPageRoute(builder: (c) => DetailedPersonScreen(person: person,)));
       },
       child: Container(
         padding: const EdgeInsets.all(16),
