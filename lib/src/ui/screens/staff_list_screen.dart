@@ -1,16 +1,17 @@
 import 'package:efk_test_app/src/blocs/staff_bloc.dart';
 import 'package:efk_test_app/src/models/staff.dart';
-import 'package:efk_test_app/src/ui/screens/add_staff_screen.dart';
+import 'package:efk_test_app/src/ui/screens/add_person_screen.dart';
 import 'package:efk_test_app/src/ui/ui_elements/buttons.dart';
 import 'package:efk_test_app/src/ui/ui_elements/person_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class StaffListScreen extends StatelessWidget {
-  final StaffBloc staffBloc = StaffBloc();
+
 
   @override
   Widget build(BuildContext context) {
+    final StaffBloc staffBloc = StaffProvider.of(context);
     return Scaffold(
       appBar: AppBar(),
       body: StreamBuilder<List<Staff>>(
@@ -29,7 +30,7 @@ class StaffListScreen extends StatelessWidget {
                       UsualButton(
                         onTap: () {
                           Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (c) => StaffProvider(staffBloc: staffBloc, child: AddStaffScreen())));
+                              builder: (c) => AddPersonScreen()));
                         },
                         text: "Добавить сотрудника",
                       ),
