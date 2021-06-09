@@ -14,7 +14,9 @@ Staff _$StaffFromJson(Map<String, dynamic> json) {
     birthday: json['birthday'] == null
         ? null
         : DateTime.parse(json['birthday'] as String),
-    children: json['children'],
+    children: (json['children'] as List<dynamic>?)
+        ?.map((e) => Person.fromJson(e as Map<String, dynamic>))
+        .toList(),
     post: json['post'] as String?,
   );
 }

@@ -9,10 +9,8 @@ class Staff extends Person {
   List<Person>? children;
   String? post;
 
-  Staff({String? firstName, String? lastName, String? middleName, DateTime? birthday, children, this.post})
-      : super(firstName, lastName, middleName, birthday) {
-    this.children = children;
-  }
+  Staff({String? firstName, String? lastName, String? middleName, DateTime? birthday, this.children, this.post})
+      : super(firstName: firstName, lastName: lastName, middleName: middleName, birthday: birthday);
 
   factory Staff.fromJson(Map<String, dynamic> json) => _$StaffFromJson(json);
 

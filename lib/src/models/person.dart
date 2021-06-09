@@ -10,7 +10,7 @@ class Person {
   String? middleName;
   DateTime? birthday;
 
-  Person(this.firstName, this.lastName, this.middleName, this.birthday);
+  Person({this.firstName, this.lastName, this.middleName, this.birthday});
 
   factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
 
