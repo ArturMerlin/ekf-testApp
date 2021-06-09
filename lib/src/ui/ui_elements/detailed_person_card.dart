@@ -1,6 +1,7 @@
 import 'package:efk_test_app/src/models/person.dart';
 import 'package:efk_test_app/src/models/staff.dart';
-import 'package:efk_test_app/src/ui/screens/detailed_person_screen.dart';
+import 'package:efk_test_app/src/ui/screens/add_person_screen.dart';
+import 'package:efk_test_app/src/ui/ui_elements/buttons.dart';
 import 'package:efk_test_app/src/ui/ui_elements/person_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,17 @@ class DetailedPersonCard extends StatelessWidget {
           _textDecoration(
               "День Рождения", "${person.birthday!.day}.${person.birthday!.month}.${person.birthday!.year}"),
           if (person is Staff) _textDecoration("Количество детей","${(person as Staff).children?.length ?? 0}"),
+          if (person is Staff)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: UsualButton(
+              onTap: () {
+                Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (c) => AddPersonScreen(parent: (person as Staff),)));
+              },
+              text: "Добавить ребёнка",
+            ),
+          ),
           if (person is Staff && ((person as Staff).children?.length ?? 0) > 0)
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
