@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:efk_test_app/src/models/person.dart';
 import 'package:efk_test_app/src/models/staff.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,8 +10,7 @@ class StaffBloc {
   /// Блок с логикой для сотрудников
 
   Subject<List<Staff>> _staffListSubj = BehaviorSubject();
-  Subject<Staff> _staffSubj = BehaviorSubject();
-  Staff staff = Staff();
+  Subject<Person> _personSubj = BehaviorSubject();
 
   StaffBloc() {
     getStaffList();
@@ -18,9 +18,9 @@ class StaffBloc {
 
   Stream<List<Staff>> get staffListStream => _staffListSubj.stream;
 
-  Stream<Staff> get staffStream => _staffSubj.stream;
+  Stream<Person> get staffStream => _personSubj.stream;
 
-  Sink<Staff> get staffSink => _staffSubj.sink;
+  Sink<Person> get staffSink => _personSubj.sink;
 
   Future<void> getStaffList() async {
     /// Получение списка сотрудников из внутреннего хранилища устрайства
@@ -35,7 +35,7 @@ class StaffBloc {
       _staffListSubj.add([]);
   }
 
-  bool validateStaff() {
+  bool validateStaff({required Staff staff}) {
     if (staff.firstName != null &&
         staff.lastName != null &&
         staff.middleName != null &&
@@ -44,7 +44,7 @@ class StaffBloc {
     return false;
   }
 
-  addStaff() async {
+  addStaff({required Staff staff}) async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     List<Staff> staffList = await _staffListSubj.first;
     staffList.add(staff);
@@ -53,9 +53,27 @@ class StaffBloc {
     _preferences.setStringList("staff_list", staffListEncoded);
   }
 
+  bool validateChild({required Person child}) {
+    if (child.firstName != null && child.lastName != null && child.middleName != null && child.birthday != null)
+      return true;
+    return false;
+  }
+
+  addChild({required Staff staff, required Person child}) async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    List<Staff> staffList = await _staffListSubj.first;
+    Staff _staff = staffList.singleWhere((element) => element == staff);
+    if (_staff.children == null) _staff.children = [];
+    _staff.children!.add(child);
+    staffList[staffList.indexOf(_staff)] = _staff;
+    _staffListSubj.add(staffList);
+    List<String> staffListEncoded = staffList.map((e) => json.encode(e.toJson())).toList();
+    _preferences.setStringList("staff_list", staffListEncoded);
+  }
+
   dispose() {
     _staffListSubj.close();
-    _staffSubj.close();
+    _personSubj.close();
   }
 }
 
