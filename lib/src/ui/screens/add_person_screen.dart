@@ -36,6 +36,9 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
       child: Scaffold(
         appBar: AppBar(),
         body: StreamBuilder<Person>(
